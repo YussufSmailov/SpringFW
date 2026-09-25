@@ -1,21 +1,18 @@
-package com.example.springf26;
+package com.example.springf26.service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.springf26.config.AppProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
-
 
 
 @Service
+@RequiredArgsConstructor
 public class HelloService {
     private final AppProperties appProperties;
-    @Autowired
-    public HelloService(AppProperties appProperties){
-        this.appProperties = appProperties;
-    }
+    private final GreetingFormatter greetingFormatter;
+
     public String greet(String name){
         String who = (name == null || name.isBlank()) ? appProperties.getDefaultName() : name;
-        return appProperties.getMessage() + ", " + who + "!";
+        String text = appProperties.getMessage() + ", " + who + "!";
+        return greetingFormatter.format(text);
     }
 }
