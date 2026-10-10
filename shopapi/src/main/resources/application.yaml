@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: shopapi
+  profiles:
+    default: dev
+app:
+  currency: KZT
+  seed-data: false
