@@ -11,7 +11,10 @@ import com.example.shopapi.model.Customer;
 import com.example.shopapi.model.Order;
 import com.example.shopapi.repository.CustomerRepository;
 import com.example.shopapi.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,30 +31,22 @@ public class CustomerService {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
     }
-    public List<CustomerResponse> findAll(){
-        List<CustomerResponse> result = new ArrayList<>();
-        for(Customer customer: customerRepository.findAll()){
-            result.add(customerMapper.toResponse(customer));
-        }
-        return result;
+    @Transactional(readOnly = true)
+    public Page<CustomerResponse> findAll(Pageable pageable){
+        return customerRepository.findAll(pageable).map(customerMapper::toResponse);
     }
-    public List<OrderResponse> findOrders(Long id){
-        getCustomer(id);
-        List<OrderResponse> result = new ArrayList<>();
-        for(Order order: orderRepository.findAll() ){
-            if (order.getCustomerId() == id){
-                result.add(orderMapper.toResponse(order));
-            }
-        }
-        return  result;
-    }
+    @Transactional(readOnly = true)
     public CustomerResponse findById(Long id){
-        return customerMapper.toResponse(customerRepository.findById(id).orElseThrow(() -> new NotFoundException("Customer not Found")));
+        return customerMapper.toResponse(getCustomer(id));
     }
-
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> findOrders(Long customerId, Pageable pageable) {
+        getCustomer(customerId);
+        return orderRepository.findByCustomerId(customerId, pageable).map(orderMapper::toResponse);
+    }
 
     public CustomerResponse create(CustomerRequest request){
-        if (customerRepository.existByEmail(request.email())){
+        if (customerRepository.existsByEmailIgnoreCase(request.email())){
             throw new ConflictException("Email " + request.email() + "already used");
         }
         Customer customer = new Customer();
@@ -61,23 +56,21 @@ public class CustomerService {
 
     public CustomerResponse update(CustomerRequest customerRequest, Long id){
         Customer customer = getCustomer(id);
-        boolean emailChanged = !customer.getEmail().equalsIgnoreCase(customerRequest.email());
-        if (emailChanged && customerRepository.existByEmail(customerRequest.email())) {
-            throw new ConflictException("E-mail " + customerRequest.email() + " is already used");
+        if(customerRepository.existsByEmailIgnoreCase(customerRequest.email())){
+            throw new ConflictException("Email already used");
         }
         customerMapper.copyToModel(customerRequest, customer);
         return customerMapper.toResponse(customerRepository.save(customer));
     }
-    public void delete(Long id){
+    public void delete(Long id) {
         getCustomer(id);
-        if (!orderRepository.findByCustomerId(id).isEmpty()) {
-            throw new ConflictException("Customer " + id + " has orders and cannot be deleted");
+        if (!orderRepository.existsByCustomerId(id)){
+            throw new ConflictException("Customer can not be deleted");
         }
         customerRepository.deleteById(id);
     }
 
     private Customer getCustomer(Long id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Customer " + id + " not found"));
+        return customerRepository.findById(id).orElseThrow(() -> new NotFoundException("Customer " + id + " not found"));
     }
 }

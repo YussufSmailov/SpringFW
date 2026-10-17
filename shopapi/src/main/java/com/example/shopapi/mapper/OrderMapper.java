@@ -15,10 +15,9 @@ public class OrderMapper {
         order.setProduct(request.product());
         order.setPrice(request.price());
         order.setQuantity(request.quantity());
-        order.setCustomerId(request.customerId());
     }
     public OrderResponse toResponse(Order order){
         return new OrderResponse(order.getId(), order.getProduct(), order.getQuantity(),
-                order.getPrice(), appProperties.currency(), order.getCustomerId());
+                order.getPrice(), appProperties.currency(), order.getCustomer().getId());
     }
 }

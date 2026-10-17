@@ -1,21 +1,14 @@
 package com.example.shopapi.repository;
 
 import com.example.shopapi.model.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CustomerRepository {
-    List<Customer> findAll();
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Optional<Customer> findById(Long id);
 
-    boolean existById(Long id);
-
-    boolean existByEmail(String email);
-
-    Customer save(Customer customer);
-
-    void deleteById(Long id);
+    boolean existsByEmailIgnoreCase(String email);
 
 }

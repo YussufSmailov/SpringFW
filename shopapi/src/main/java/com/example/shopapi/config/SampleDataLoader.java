@@ -21,8 +21,8 @@ public class SampleDataLoader implements ApplicationRunner {
     private final OrderService orderService;
     @Override
     public void run(ApplicationArguments args) {
-        CustomerResponse aliya = customerService.create(new CustomerRequest("Aliya Nurlanova", "aliya@example.com"));
-        CustomerResponse timur = customerService.create(new CustomerRequest("Timur Sadykov", "timur@example.com"));
+        CustomerResponse aliya = customerService.create(new CustomerRequest("Aliya Nurlanova", "aliya@kbtu.kz"));
+        CustomerResponse timur = customerService.create(new CustomerRequest("Timur Sadykov", "timur@kbtu.kz"));
 
         orderService.create(new OrderRequest("Laptop", 1, new BigDecimal("450000"), aliya.id()));
         orderService.create(new OrderRequest("Mouse", 2, new BigDecimal("8000"), aliya.id()));

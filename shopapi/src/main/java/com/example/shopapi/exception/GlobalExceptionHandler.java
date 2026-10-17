@@ -47,8 +47,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex, HttpServletRequest request) {
-        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request, List.of());
+    public ResponseEntity<ErrorResponse> handleNotFound(HttpServletRequest request, NotFoundException ex){
+        return build(HttpStatus.NOT_FOUND, "Not foind", request, List.of());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

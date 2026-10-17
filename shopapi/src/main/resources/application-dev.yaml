@@ -1,9 +1,10 @@
 server:
   port: 8080
-
+spring:
+  jpa:
+    show-sql: true
 logging:
   level:
     com.example.shop: DEBUG
 
-app:
-  seed-data: true
+

@@ -3,6 +3,18 @@ spring:
     name: shopapi
   profiles:
     default: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shopdb
+    username: ${DB_USERNAME:postgress}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  data:
+    web:
+      pageable:
+        max-page-size: 50
 app:
   currency: KZT
   seed-data: false

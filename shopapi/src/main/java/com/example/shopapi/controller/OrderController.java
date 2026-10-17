@@ -5,6 +5,9 @@ import com.example.shopapi.dto.OrderResponse;
 import com.example.shopapi.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +21,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<OrderResponse> findAll(){
-        return orderService.findAll();
+    public Page<OrderResponse> findAll(@PageableDefault(size = 10, sort="id")Pageable pageable){
+        return orderService.findAll(pageable);
     }
     @GetMapping("/{id}")
     public OrderResponse findById(@PathVariable Long id){
