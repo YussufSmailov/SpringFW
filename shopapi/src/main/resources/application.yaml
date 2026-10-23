@@ -17,4 +17,3 @@ spring:
         max-page-size: 50
 app:
   currency: KZT
-  seed-data: false

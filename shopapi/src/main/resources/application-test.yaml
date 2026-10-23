@@ -7,4 +7,3 @@ logging:
 
 app:
   currency: USD
-  seed-data: false
